@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:http/http.dart' as http;
+import 'package:visionboard/shape.dart';
+import 'package:visionboard/shape_converter.dart';
+
+import 'drawing.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
   String _lastWords = '';
+  List<MyShape> _itemsToDraw = [];
 
   @override
   void initState() {
@@ -62,6 +67,17 @@ class _MyHomePageState extends State<MyHomePage> {
   /// listen method.
   void _stopListening() async {
     await _speechToText.stop();
+
+    // TODO: Call the cloud function here
+    // print('Response from cloud function: '+getLayout('$_lastWords').toString());
+
+    List<String> output = ['circle', 'rectangle'];
+    ShapeConverter myConverter = ShapeConverter(output);
+    _itemsToDraw = myConverter.getListOfShapes();
+    setState(() {
+
+
+    });
     setState(() {});
   }
 
@@ -70,7 +86,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
       _lastWords = result.recognizedWords;
-      print('Response from cloud function: '+getLayout('$_lastWords').toString());
     });
   }
 
@@ -92,7 +107,11 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('Vision Board'),
       ),
-      body: Center(
+      body:
+      SafeArea(
+        child:
+
+      Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -103,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: TextStyle(fontSize: 20.0),
               ),
             ),
-            Expanded(
+            Flexible(
               child: Container(
                 padding: EdgeInsets.all(16),
                 child: Text(
@@ -120,9 +139,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
+            Expanded(
+              child: Drawing(context, _itemsToDraw)
+            )
           ],
         ),
-      ),
+      )),
       floatingActionButton: FloatingActionButton(
         onPressed:
         // If not yet listening for speech start, otherwise stop
