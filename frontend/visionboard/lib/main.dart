@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -13,9 +16,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Vision Board',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.deepPurple,
       ),
       home: MyHomePage(),
     );
@@ -48,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// Each time to start a speech recognition session
   void _startListening() async {
+    _lastWords = '';
     await _speechToText.listen(onResult: _onSpeechResult);
     setState(() {});
   }
@@ -66,14 +70,27 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
       _lastWords = result.recognizedWords;
+      print('Response from cloud function: '+getLayout('$_lastWords').toString());
     });
+  }
+
+  Future<http.Response> getLayout(String layout_description) {
+    return http.post(
+      Uri.parse('https://us-central1-visionboard-342516.cloudfunctions.net/get_layout'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'message': layout_description,
+      }),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Speech Demo'),
+        title: Text('Vision Board'),
       ),
       body: Center(
         child: Column(
