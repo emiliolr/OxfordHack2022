@@ -1,4 +1,5 @@
 from PIL import Image, ImageDraw
+from random import randint
 
 # TODO:
 #  - figure out how to deal w/more ambiguous inputs (i.e., just saying "middle")
@@ -7,7 +8,7 @@ from PIL import Image, ImageDraw
 
 # Get coordinates, width, height for a shape
 def get_shape_params(size, location_params, screen_height, screen_width, shape):
-    div = 3 if size == 'large' else 7
+    div = 3 if size in ['large', 'big'] else 7
     side = max(int(screen_height / div), int(screen_width / div))
 
     height_map = {
@@ -21,6 +22,13 @@ def get_shape_params(size, location_params, screen_height, screen_width, shape):
     }
 
     # TODO: will need to tweak here based on what is needed in Flutter!
+    if len(location_params) == 0:
+        first_coord = (randint(width_map['left'], width_map['right']),
+                       randint(height_map['top'], height_map['bottom']))
+        second_coord = (first_coord[0] + side, first_coord[1] + side)
+
+        return first_coord, second_coord
+
     for h in height_map.keys():
         for w in width_map.keys():
             if h in location_params and w in location_params:
@@ -57,6 +65,17 @@ def draw_shape(draw, size, color, location_params, screen_height, screen_width, 
         'right' : int(screen_width) - side - 10
     }
 
+    if len(location_params) == 0:
+        first_coord = (randint(width_map['left'], width_map['right']),
+                       randint(height_map['top'], height_map['bottom']))
+        second_coord = (first_coord[0] + side, first_coord[1] + side)
+        location = (first_coord, second_coord)
+
+        if shape == 'square':
+            draw.rectangle(location, fill = color)
+        elif shape == 'circle':
+            draw.ellipse(location, fill = color)
+
     for h in height_map.keys():
         for w in width_map.keys():
             if h in location_params and w in location_params:
@@ -65,9 +84,6 @@ def draw_shape(draw, size, color, location_params, screen_height, screen_width, 
                     draw.rectangle(location, fill = color)
                 elif shape == 'circle':
                     draw.ellipse(location, fill = color)
-
-    if len(location_params) == 1:
-        pass
 
 # Generate a save layout as image using a PIL canvas
 def generate_layout_PIL(layout_dict, screen_height, screen_width):
@@ -86,7 +102,9 @@ def generate_layout_PIL(layout_dict, screen_height, screen_width):
 if __name__ == '__main__':
     from statement_parsing import parse_text
 
-    TEST_TEXT = 'Let\'s do a small blue circle in the top left, a large green square in the middle left, and a small red triangle anywhere.'
+    # TEST_TEXT = 'Let\'s do a small blue circle in the top left, a large green square in the middle left, and a small red triangle anywhere.'
+    TEST_TEXT = 'A big green square.'
+    TEST_TEXT = TEST_TEXT.replace(' ', '%')
     TEST_LAYOUT = parse_text(TEST_TEXT)
 
     # Layout space parameters

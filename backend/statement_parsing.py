@@ -6,7 +6,13 @@ import matplotlib.colors as colors
 #  - make more robust to more natural sentence structures
 #  - allow compound stuff (i.e., dark blue)
 
+nlp = spacy.load('en_core_web_sm')
+
 def parse_text(text):
+    # Removing '%' and adding back in spaces, if necessary
+    if '%' in text:
+        text = ' '.join(text.split('%'))
+
     # Keywords to use and translate to a location map for all desired objects
     KEYWORDS = {
         'OBJECTS' : ['square', 'circle', 'triangle'],
@@ -16,7 +22,6 @@ def parse_text(text):
     }
 
     # spaCy language model for extracting dependencies from input text
-    nlp = spacy.load('en_core_web_sm')
     doc = nlp(text)
 
     found_objects = {}  # to hold onto keywords and descriptions/locations
@@ -44,5 +49,6 @@ def parse_text(text):
 if __name__ == '__main__':
     # Input text, to be collected by speech to text
     TEST_TEXT = 'Let\'s do a small blue circle in the top left, a large green square in the middle left, and a small red triangle anywhere.'
+    TEST_TEXT = TEST_TEXT.replace(' ', '%')
 
     print(parse_text(TEST_TEXT))
