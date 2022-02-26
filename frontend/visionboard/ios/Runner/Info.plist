@@ -43,5 +43,13 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSBonjourServices</key>
+    <array>
+        <string>_dartobservatory._tcp</string>
+    </array>
+	<key>NSSpeechRecognitionUsageDescription</key>
+    <string>We record audio to convert it to text to draw images.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We record audio to convert it to text to draw images.</string>
 </dict>
 </plist>
