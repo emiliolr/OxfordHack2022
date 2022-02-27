@@ -39,7 +39,7 @@ def parse_text(text):
                         if subchild.dep_ == 'pobj' and subchild.text in KEYWORDS['LOCATIONS']:  # found absolute location
                             found_objects[token.text]['loc'].append(subchild.text)
                             for subsubchild in subchild.children:  # find any additional descriptions of location
-                                if subsubchild.dep_ == 'amod' and subsubchild.text in KEYWORDS['LOCATIONS']:
+                                if subsubchild.dep_ in ['amod', 'compound'] and subsubchild.text in KEYWORDS['LOCATIONS']:
                                     found_objects[token.text]['loc'].append(subsubchild.text)
 
         # print(token.text, token.dep_, token.pos_, token.head.text, token.head.pos_, [child for child in token.children])
@@ -48,7 +48,8 @@ def parse_text(text):
 
 if __name__ == '__main__':
     # Input text, to be collected by speech to text
-    TEST_TEXT = 'Let\'s do a small blue circle in the top left, a large green square in the middle left, and a small red triangle anywhere.'
+    # TEST_TEXT = 'Let\'s do a small blue circle in the top left, a large green square in the middle left, and a small red triangle anywhere.'
+    TEST_TEXT = 'I want a red square in the top right.'
     TEST_TEXT = TEST_TEXT.replace(' ', '%')
 
     print(parse_text(TEST_TEXT))
