@@ -22,31 +22,44 @@ def get_shape_params(size, location_params, screen_height, screen_width, shape):
     }
 
     # TODO: will need to tweak here based on what is needed in Flutter!
+    #  - also need to add screen width/height to cloud function input!
     if len(location_params) == 0:
-        first_coord = (randint(width_map['left'], width_map['right']),
-                       randint(height_map['top'], height_map['bottom']))
-        second_coord = (first_coord[0] + side, first_coord[1] + side)
+        top_left = (randint(width_map['left'], width_map['right']),
+                    randint(height_map['top'], height_map['bottom']))
 
-        return first_coord, second_coord
+    # print(location_params)
 
     for h in height_map.keys():
         for w in width_map.keys():
             if h in location_params and w in location_params:
-                return (width_map[w], height_map[h]), (width_map[w] + side, height_map[h] + side)
+                top_left = (width_map[w], height_map[h])
+
+    if shape == 'square':
+        return top_left, side
+    elif shape == 'circle':
+        radius = int(side / 2)
+        center = (top_left[0] + radius, top_left[1] + radius)
+
+        return radius, center
 
 # ACTUAL CODE: generate the layout from parsed text and return as a dictionary
 def generate_layout(layout_dict, screen_height, screen_width):
     layout = {}
 
     for shape in layout_dict.keys():
-        if shape in ['circle', 'square']:
-            size = layout_dict[shape]['desc']['size']
-            loc = layout_dict[shape]['loc']
-            color = layout_dict[shape]['desc']['color']
+        size = layout_dict[shape]['desc']['size']
+        loc = layout_dict[shape]['loc']
+        color = layout_dict[shape]['desc']['color']
 
-            top_left, bottom_right = get_shape_params(size, loc, screen_height, screen_width, shape)
+        if color == None:
+            color = '#808080'
 
-            layout[shape] = {'top_left' : top_left, 'bottom_right' : bottom_right, 'color' : color}
+        if shape == 'square':
+            top_left, side = get_shape_params(size, loc, screen_height, screen_width, shape)
+            layout[shape] = {'top_left' : top_left, 'side_length' : side, 'color' : color}
+        elif shape == 'circle':
+            radius, center = get_shape_params(size, loc, screen_height, screen_width, shape)
+            layout[shape] = {'radius' : radius, 'center' : center, 'color' : color}
 
     return layout
 
@@ -102,10 +115,12 @@ def generate_layout_PIL(layout_dict, screen_height, screen_width):
 if __name__ == '__main__':
     from statement_parsing import parse_text
 
-    # TEST_TEXT = 'Let\'s do a small blue circle in the top left, a large green square in the middle left, and a small red triangle anywhere.'
-    TEST_TEXT = 'A big green square.'
+    # TEST_TEXT = 'Let\'s do a small blue circle in the bottom left, a large green square in the middle left, and a small red triangle anywhere.'
+    # TEST_TEXT = 'We\'ll start with a small square in the middle left and then a large green circle in the bottom right.'
+    TEST_TEXT = 'Let\'s do a small pink circle.'
     TEST_TEXT = TEST_TEXT.replace(' ', '%')
     TEST_LAYOUT = parse_text(TEST_TEXT)
+    # print(TEST_LAYOUT)
 
     # Layout space parameters
     HEIGHT = 1000
@@ -113,4 +128,4 @@ if __name__ == '__main__':
 
     # Generate and save layout with PIL
     print(generate_layout(TEST_LAYOUT, HEIGHT, WIDTH))
-    generate_layout_PIL(TEST_LAYOUT, HEIGHT, WIDTH)
+    # generate_layout_PIL(TEST_LAYOUT, HEIGHT, WIDTH)
