@@ -7,20 +7,6 @@ import 'dart:ui';
 
 import 'hexcolor.dart';
 
-// Widget
-Widget Drawing(context, List<MyShape> itemsToDraw) {
-  return Container(
-    decoration: const BoxDecoration(
-        color: BLUE_DARK2, borderRadius: BorderRadius.all(Radius.circular(20))),
-    width: MediaQuery.of(context).size.width,
-    padding: EdgeInsets.all(16.0),
-    margin: EdgeInsets.all(16.0),
-    child: CustomPaint(
-      painter: OpenPainter(itemsToDraw: itemsToDraw),
-    ),
-  );
-}
-
 // Draw on our canvas
 class OpenPainter extends CustomPainter {
   List<MyShape> itemsToDraw;
@@ -50,13 +36,12 @@ class OpenPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
 
+
     if (size.width > 1.0 && size.height > 1.0) {
-      print(">1.9");
       SizeUtil.size = size;
     }
 
     itemsToDraw.forEach((MyShape shape){
-      print(shape);
       if(shape.shapeName == 'circle'){
         draw_circle(canvas, shape as Circle);
       }
@@ -72,10 +57,6 @@ class OpenPainter extends CustomPainter {
   @override
   bool shouldRepaint(OpenPainter oldDelegate) => oldDelegate.itemsToDraw != itemsToDraw;
 }
-
-
-
-
 
 
 

@@ -3,33 +3,36 @@ import 'dart:math';
 import 'package:visionboard/shape.dart';
 
 class ShapeConverter {
-  List<String> _inputText = [];
+  late Map<String, dynamic> _inputText;
   Random random = new Random(); // TODO: Remove the randomness
 
-  ShapeConverter(List<String> inputText) {
+  ShapeConverter(Map<String, dynamic> inputText) {
     _inputText = inputText;
+    print('Result of post request: '+inputText.toString());
   }
 
   List<MyShape> getListOfShapes() {
     List<MyShape> shapes = [];
 
-    _inputText.forEach((String shape) {
-      if (shape == 'circle') {
+    print(_inputText);
+
+    _inputText.forEach((key, value) {
+      if (key == 'circle') {
         shapes.add(Circle(
-            shapeName: shape,
-            color: '#ff0000',
-            radius: 30.0,
-            x_center: random.nextInt(100) * 1.0,
-            y_center: random.nextInt(100) * 1.0,
+            shapeName: key,
+            color: value['color'],
+            radius: value['radius'] * 1.0,
+            x_center: value['center'][0] * 1.0,
+            y_center: value['center'][1] * 1.0,
             fill: true));
-      } else if (shape == 'rectangle') {
+      } else if (key == 'square') {
         shapes.add(Rectangle(
-            shapeName: shape,
-            color: '#00ff00',
-            x_start: random.nextInt(100) * 1.0,
-            y_start: random.nextInt(100) * 1.0,
-            width: 50.0,
-            height: 50.0,
+            shapeName: 'rectangle',
+            color: value['color'],
+            x_start: value['top_left'][0] * 1.0,
+            y_start: value['top_left'][1] * 1.0,
+            width: value['side_length'] * 1.0,
+            height: value['side_length'] * 1.0,
             fill: false));
       }
     });
