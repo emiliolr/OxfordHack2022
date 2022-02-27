@@ -8,15 +8,13 @@ class ShapeConverter {
 
   ShapeConverter(Map<String, dynamic> inputText) {
     _inputText = inputText;
-    print('Result of post request: '+inputText.toString());
   }
 
   List<MyShape> getListOfShapes() {
     List<MyShape> shapes = [];
 
-    print(_inputText);
-
     _inputText.forEach((key, value) {
+      print(key);
       if (key == 'circle') {
         shapes.add(Circle(
             shapeName: key,
@@ -24,7 +22,7 @@ class ShapeConverter {
             radius: value['radius'] * 1.0,
             x_center: value['center'][0] * 1.0,
             y_center: value['center'][1] * 1.0,
-            fill: true));
+            fill: false));
       } else if (key == 'square') {
         shapes.add(Rectangle(
             shapeName: 'rectangle',

@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
       Map<String, dynamic> output = jsonDecode(response.body);
 
       ShapeConverter myConverter = ShapeConverter(output);
-      _itemsToDraw = myConverter.getListOfShapes();
+      _itemsToDraw = _itemsToDraw + myConverter.getListOfShapes();
     }
     else{
       _lastWords = 'Nothing to show!';
@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          'text': layout_description,
+          'text': layout_description+'.',
           'screen_width': (MediaQuery.of(context).size.width - 50.0).toInt(),
           'screen_height': (MediaQuery.of(context).size.height * 1/2).toInt(),
         }),
