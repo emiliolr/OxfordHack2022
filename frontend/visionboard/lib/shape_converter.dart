@@ -22,7 +22,7 @@ class ShapeConverter {
             radius: value['radius'] * 1.0,
             x_center: value['center'][0] * 1.0,
             y_center: value['center'][1] * 1.0,
-            fill: false));
+            fill: true));
       } else if (key == 'square') {
         shapes.add(Rectangle(
             shapeName: 'rectangle',
@@ -31,7 +31,7 @@ class ShapeConverter {
             y_start: value['top_left'][1] * 1.0,
             width: value['side_length'] * 1.0,
             height: value['side_length'] * 1.0,
-            fill: false));
+            fill: true));
       }
     });
 

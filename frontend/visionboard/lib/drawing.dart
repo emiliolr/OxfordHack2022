@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:visionboard/shape.dart';
 import 'dart:math';
-import 'constants.dart';
 import 'dart:ui';
 
 import 'hexcolor.dart';
